@@ -26,3 +26,25 @@ class LeafNode(HtmlNode):
             return self.value
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
+class VoidNode(HtmlNode):
+    def __init__(self, tag, props = None):
+        super().__init__(tag=tag, props=props)
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("tag cannot be None")
+        return f"<{self.tag}{self.props_to_html()}>"
+
+
+def reducer(a, c):
+    return a + c.to_html()
+
+class ParentNode(HtmlNode):
+    def __init__(self, children, tag = None, props = None):
+        super().__init__(tag = tag, children = children, props = props)
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("No tag")
+        if self.children == None or len(self.children) == 0:
+            raise ValueError("No children")
+        return f"<{self.tag}{self.props_to_html()}>{reduce(reducer, self.children, '')}</{self.tag}>"
+
